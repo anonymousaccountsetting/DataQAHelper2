@@ -1,0 +1,23 @@
+My question is: {{question}}
+Please refer to the template below and choose the Section number that matches the meaning of my question.
+{%if type==1%}
+Template: 
+
+Section 1:
+Question: Is the relationship between Xcol with the ycol strong? Is the model credible?
+Section 2:
+Question: How does the ycol change with an increase in the Xcol? And does the Xcol have a significant effect on the ycol?
+Section 3:
+Question: How can the independent variables be varied to make the ycol as small as possible? Which independent variable is the most important to the ycol?
+{%elif type==2%}
+Template:
+
+Section 1:
+Question: How accuracy is the model?
+Section 2:
+Question: For each category in the ycol, which Xcols have a positive impact on it and which ones have a negative impact?
+Section 3:
+Question: Which Xcol is most important for each category in the ycol? On average, which Xcol is most important for the classification?
+{%endif%}
+
+Only answer an integer as your choose, do not reply with any information other than the integer, do not reply why you choose the section number. Returns 0 if no section matches.

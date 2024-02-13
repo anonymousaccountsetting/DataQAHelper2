@@ -6,6 +6,8 @@ from docx import Document
 import statsmodels.api as sm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression, RidgeClassifier,LinearRegression, Ridge, Lasso, BayesianRidge
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor,RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score,roc_auc_score, roc_curve,r2_score
@@ -27,7 +29,7 @@ file_loader = FileSystemLoader('./apptemplates')
 
 env = Environment(loader=file_loader)
 
-# Loading the Jinja templates from the folder
+# # Loading the Jinja templates from the folder
 # For the regression
 linearSummary = env.get_template('linearSummary.txt')
 linearSummary2 = env.get_template('linearSummary2.txt')
@@ -35,11 +37,21 @@ linearSummary3 = env.get_template('linearSummary3.txt')
 linearSummary4 = env.get_template('linearSummary4.txt')
 linearQuestion = env.get_template('linearQuestionset.txt')
 
+# For Machine Learning Model
+MachineLearningLinearModelSummary1=env.get_template('MachineLearningLinearModelSummary1.txt')
+MachineLearningLinearModelSummary2=env.get_template('MachineLearningLinearModelSummary2.txt')
+MLlinearQuestionSet=env.get_template('MLlinearQuestionSet.txt')
+MachineLearningclassifierSummary1=env.get_template('MachineLearningClassifierModelSummary1.txt')
+MachineLearningclassifierSummary2=env.get_template('MachineLearningClassifierModelSummary2.txt')
+MLclassifierQuestionSet=env.get_template('MLclassifierQuestionSet.txt')
+
 # For the classifier
 classifiersummary1=env.get_template('classifiersummary1.txt')
 classifiersummary2=env.get_template('classifiersummary2.txt')
 classifiersummary3=env.get_template('classifiersummary3.txt')
 classifierquestion=env.get_template('classifierQuestionset.txt')
+
+
 
 # For ChatGPT
 databackground = env.get_template('databackground.txt')
@@ -186,6 +198,20 @@ class MyApp:
         self.ridge_alpha_entry = tk.Entry(self.window)
         self.ridge_alpha_entry.grid(row=6, column=0, sticky=tk.E+tk.W, padx=10, pady=5)
 
+
+        # Use GB Regression
+        self.GB_button = tk.Radiobutton(self.window, text="Use Gradient Boosting Regression",
+                                             variable=self.model_var, value=5)
+        self.GB_button.grid(row=7, column=0, sticky=tk.E+tk.W, padx=10)
+
+
+        # Use RF Regression
+        self.RF_button = tk.Radiobutton(self.window, text="Use Random Forest Regression",
+                                             variable=self.model_var, value=6)
+        self.RF_button.grid(row=8, column=0, sticky=tk.E+tk.W, padx=10)
+
+
+
         # Add Lasso Regression option
         self.lasso_checkbutton = tk.Radiobutton(self.window, text="Use Lasso Regression", variable=self.model_var,
                                                 value=3)
@@ -222,25 +248,35 @@ class MyApp:
 
         self.model_var = tk.IntVar()
 
-        # Use Statsmodels Linear Regression
-        self.statsmodels_button = tk.Radiobutton(self.window, text="Use Logistic Regression",
+        # Use Logistic Regression
+        self.Logistic_button = tk.Radiobutton(self.window, text="Use Logistic Regression",
                                                  variable=self.model_var, value=0)
-        self.statsmodels_button.grid(row=2, column=0, sticky=tk.E+tk.W, padx=10)
+        self.Logistic_button.grid(row=2, column=0, sticky=tk.E+tk.W, padx=10)
 
-        # Use Scikit-learn Linear Regression
-        self.sklearn_button = tk.Radiobutton(self.window, text="Use Linear Discriminant Analysis",
+        # Use Linear Discriminant Analysis
+        self.LDA_button = tk.Radiobutton(self.window, text="Use Linear Discriminant Analysis",
                                              variable=self.model_var, value=1)
-        self.sklearn_button.grid(row=3, column=0, sticky=tk.E+tk.W, padx=10)
+        self.LDA_button.grid(row=3, column=0, sticky=tk.E+tk.W, padx=10)
 
-        # Add Ridge Regression option
-        self.ridge_checkbutton = tk.Radiobutton(self.window, text="Use SVM - Linear Kernel", variable=self.model_var,
+        # Add SVM - Linear Kernel option
+        self.SVM_checkbutton = tk.Radiobutton(self.window, text="Use SVM - Linear Kernel", variable=self.model_var,
                                                 value=2)
-        self.ridge_checkbutton.grid(row=4, column=0, sticky=tk.E+tk.W, padx=10)
+        self.SVM_checkbutton.grid(row=4, column=0, sticky=tk.E+tk.W, padx=10)
 
-        # Add Lasso Regression option
-        self.lasso_checkbutton = tk.Radiobutton(self.window, text="Use Ridge Classifier", variable=self.model_var,
+        # Add Ridge Classifier option
+        self.RC_checkbutton = tk.Radiobutton(self.window, text="Use Ridge Classifier", variable=self.model_var,
                                                 value=3)
-        self.lasso_checkbutton.grid(row=5, column=0, sticky=tk.E+tk.W, padx=10)
+        self.RC_checkbutton.grid(row=5, column=0, sticky=tk.E+tk.W, padx=10)
+
+        # Add Random Forest Classifier option
+        self.RF_checkbutton = tk.Radiobutton(self.window, text="Use Random Forest Classifier", variable=self.model_var,
+                                                value=4)
+        self.RF_checkbutton.grid(row=6, column=0, sticky=tk.E+tk.W, padx=10)
+
+        # Add Ridge Classifier option
+        self.DT_checkbutton = tk.Radiobutton(self.window, text="Use Decision Tree Classifier", variable=self.model_var,
+                                                value=5)
+        self.DT_checkbutton.grid(row=7, column=0, sticky=tk.E+tk.W, padx=10)
 
         tk.Button(self.window, text="Next", command=self.perform_classifier, anchor='e').grid()
 
@@ -256,7 +292,7 @@ class MyApp:
         dataset = pd.concat([X_train, y_train], axis=1)
 
         reg = regression.setup(data=dataset, target=self.selected_dependent_var)
-        exclude=['gbr','rf','catboost','lightgbm','et','ada','xgboost','llar','lar','huber','dt','omp','par','en','knn','dummy']
+        exclude=['catboost','lightgbm','et','ada','xgboost','llar','lar','huber','dt','omp','par','en','knn','dummy']
         best_model = regression.compare_models(exclude=exclude, n_select=1, sort=self.selected_criterion)
         comapre_results = regression.pull()
         self.p_values = sm.OLS(y, sm.add_constant(X)).fit().pvalues
@@ -291,7 +327,7 @@ class MyApp:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         dataset = pd.concat([X_train, y_train], axis=1)
         clf = classification.setup(data=dataset, target=self.selected_dependent_var)
-        exclude = ['qda','knn','lightgbm','et','catboost','xgboost','dt','rf','gbc','ada','dummy']
+        exclude = ['qda','knn','lightgbm','et','catboost','xgboost','gbc','ada','dummy']
 
         best_model = classification.compare_models(exclude=exclude, n_select=1, sort=self.selected_criterion)
         comapre_results = classification.pull()
@@ -369,8 +405,40 @@ class MyApp:
             y_pred = model.predict(X_test)
             self.r_squared = r2_score(y_test, y_pred)
 
+        elif self.model_var.get()==5:
+            self.p_values = sm.OLS(y, sm.add_constant(X)).fit().pvalues
+
+            # Create Gradient Boosting Regressor
+            model = GradientBoostingRegressor(random_state=42)
+            model.fit(X_train, y_train)
+
+            # Get the coefficients for each predictor
+            self.coefficients = np.append(0, model.feature_importances_)
+            # Calculate R-squared
+            y_pred = model.predict(X_test)
+            self.r_squared = r2_score(y_test, y_pred)
+            self.r2_train = model.score(X_train, y_train)
+            self.r2_test = model.score(X_test, y_test)
+
+        elif self.model_var.get()==6:
+            self.p_values = sm.OLS(y, sm.add_constant(X)).fit().pvalues
+
+            # Create Random Forest Regressor
+            model = RandomForestRegressor(random_state=42)
+            model.fit(X_train, y_train)
+
+            # Get the coefficients for each predictor
+            self.coefficients = np.append(0, model.feature_importances_)
+
+            # Calculate R-squared
+            y_pred = model.predict(X_test)
+            self.r_squared = r2_score(y_test, y_pred)
+            self.r2_train = model.score(X_train, y_train)
+            self.r2_test = model.score(X_test, y_test)
+
         # if self.model_var.get() != 0:
         #     print(model.feature_importances_)
+
 
         # Create a dataframe with coefficients and p-values (if available) for independent variables only
         data_dict = {'Coefficients': self.coefficients[1:]}
@@ -378,6 +446,9 @@ class MyApp:
         self.coef_pval_df = pd.DataFrame(data_dict, index=self.selected_independent_vars)
         self.coef_pval_df.index.name = "Xcol"
         self.coef_pval_df = self.coef_pval_df.reset_index()
+
+        print(data_dict)
+
         self.step5()
 
     def perform_classifier(self):
@@ -398,31 +469,49 @@ class MyApp:
         elif self.model_var.get()==3:
             model = RidgeClassifier()
 
+        elif self.model_var.get()==4:
+            model = RandomForestClassifier()
+        elif self.model_var.get()==5:
+            model = DecisionTreeClassifier()
+
         model.fit(X_train, y_train)
 
-        # print(model.feature_importances_)
-        self.coefficients=model.coef_
-        target_names = model.classes_
+        if self.model_var.get()<4:
+            # print(model.feature_importances_)
+            self.coefficients=model.coef_
+            target_names = model.classes_
 
-        if len(target_names) == 2 and model.coef_.shape[0] == 1:
-            # Special handling for binary classification case
-            self.coeff_df = pd.DataFrame(model.coef_, columns=self.selected_independent_vars, index=[target_names[0]])
+            if len(target_names) == 2 and model.coef_.shape[0] == 1:
+                # Special handling for binary classification case
+                self.coeff_df = pd.DataFrame(model.coef_, columns=self.selected_independent_vars, index=[target_names[0]])
+            else:
+                # The usual case for multiclass classification
+                self.coeff_df = pd.DataFrame(model.coef_, columns=self.selected_independent_vars, index=target_names)
+            # Add pseudo column for index values
+            self.coeff_df.insert(0, self.selected_dependent_var, self.coeff_df.index)
+
+            # Reset index
+            self.coeff_df.reset_index(drop=True, inplace=True)
+            # print(model.coef_)
+            # print(self.selected_independent_vars)
+            # print(target_names)
         else:
-            # The usual case for multiclass classification
-            self.coeff_df = pd.DataFrame(model.coef_, columns=self.selected_independent_vars, index=target_names)
-
-
-        # Add pseudo column for index values
-        self.coeff_df.insert(0, self.selected_dependent_var, self.coeff_df.index)
-
-        # Reset index
-        self.coeff_df.reset_index(drop=True, inplace=True)
+            self.coefficients=model.feature_importances_
+            self.coeff_df=pd.DataFrame([model.feature_importances_], columns=self.selected_independent_vars)
 
         print(self.coeff_df)
+        # feature_importance = np.mean(np.abs(self.coefficients), axis=0)
+        # most_important_x = self.coeff_df.columns[np.argmax(np.abs(feature_importance))]
+        # print(np.abs(feature_importance))
+        # print(most_important_x)
         y_pred = model.predict(X_test)
         # Calculate and output the accuracy
         self.accuracy = accuracy_score(y_test, y_pred)
+
+        self.train_accuracy = model.score(X_train, y_train)
+        self.test_accuracy = model.score(X_test, y_test)
         self.step5()
+
 
 
     def step5(self):
@@ -559,6 +648,7 @@ class MyApp:
             self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
             return
         key=user_api_key
+        
         os.environ['OPENAI_API_KEY'] = key
         gpt_model_name_input = self.gpt_model_name.get()
         gpt_model_name = gpt_model_name_input if gpt_model_name_input else "gpt-3.5-turbo"
@@ -575,6 +665,10 @@ class MyApp:
                 self.modelname="Lasso Regression"
             elif self.model_var.get() == 4:
                 self.modelname="Bayesian Ridge Regression"
+            elif self.model_var.get() == 5:
+                self.modelname = "Gradient Boosting Regressor"
+            elif self.model_var.get() == 6:
+                self.modelname = "Random Forest Regressor"
             modelinformation=f"The R-squared of the model is: {self.r_squared:.4f}\n"+str(self.coef_pval_df)
 
         elif self.choice.get() == 2:
@@ -586,6 +680,10 @@ class MyApp:
                 self.modelname = "SVM-Linear Kernel"
             elif self.model_var.get() == 3:
                 self.modelname = "Ridge Classifier"
+            elif self.model_var.get() == 4:
+                self.modelname = "Random Forest Classifier"
+            elif self.model_var.get() == 5:
+                self.modelname = "Decision Tree Classifier"
             modelinformation = f"The accuracy of the model is: {self.accuracy:.4f}\n" + str(self.coeff_df)
 
         elif self.choice.get() == 3:
@@ -656,6 +754,13 @@ class MyApp:
                 questions.append(question)
                 answers.append(answer)
 
+        elif section_num==5:
+            questions = MLlinearQuestionSet.render(section=5, ycol=self.selected_dependent_var)
+            most_important_x = self.selected_independent_vars[np.argmax(np.abs(self.coefficients[1:]))]
+            answers = MachineLearningLinearModelSummary1.render(ycol=self.selected_dependent_var,Xcol=most_important_x,coeff=np.abs(self.coefficients[1:]))
+        elif section_num == 6:
+            questions = MLlinearQuestionSet.render(section=6, ycol=self.selected_dependent_var)
+            answers = MachineLearningLinearModelSummary2.render(trainR2=self.r2_train, testR2=self.r2_test)
         elif section_num==0:
             questions="There are no matching default questions in the template."
             answers="Please answer the question based on the analysis results."
@@ -719,6 +824,19 @@ class MyApp:
                 most_important_feature = row.abs().idxmax()
                 text = text + f"\nFor the {target_name},the most important feature is {most_important_feature}."
             answers = text + '\n' + answer
+
+        elif section_num == 4:
+            questions = MLclassifierQuestionSet.render(section=4)
+            answers = classifiersummary1.render(trainR2=self.train_accuracy, testR2=self.test_accuracy)
+
+        elif section_num == 5:
+            questions = MLclassifierQuestionSet.render(section=5)
+
+            max_value = self.coeff_df.abs().max().max()
+            most_important_x = self.coeff_df.columns[self.coeff_df.abs().iloc[0] == max_value][0]
+
+            answers = classifiersummary2.render(Xcol=most_important_x, ycol=self.selected_dependent_var,coeff=max_value)
+
         elif section_num == 0:
             questions="There are no matching default questions in the template."
             answers="Please answer the question based on the analysis results."
@@ -743,12 +861,28 @@ class MyApp:
         # query ="My question is: "+self.user_question+"\n Please refer to the text and choose the Section number that matches the meaning of my question. Please note that as long as the meaning matches, there is no need for word-for-word correspondence. My entry may have spelling or grammatical mistakes, please ignore those mistakes. Returns 0 if no section matches. Only answer an integer as your choose, do not reply with any information other than the integer, do not reply why you choose the section number."
         # output = index.query(query)
 
-        if self.choice.get() == 1 or self.choice.get() == 3:
-            with open('./apptemplates/linearQuestionBank.txt', 'r') as file:
+        if self.choice.get() == 1:
+            if self.model_var.get()<5:
+                with open('./apptemplates/QuestionBank/linearQuestionBank.txt', 'r') as file:
+                    content = file.read()
+            else:
+                with open('./apptemplates/QuestionBank/MLlinearQuestionBank.txt', 'r') as file:
+                    content = file.read()
+        elif self.choice.get() == 3:
+            with open('./apptemplates/QuestionBank/linearQuestionBank.txt', 'r') as file:
                 content = file.read()
-        elif self.choice.get() == 2 or self.choice.get() == 4:
-            with open('./apptemplates/classifierQuestionBank.txt', 'r') as file:
+
+        elif self.choice.get() == 2:
+            if self.model_var.get()<4:
+                with open('./apptemplates/QuestionBank/classifierQuestionBank.txt', 'r') as file:
+                    content = file.read()
+            else:
+                with open('./apptemplates/QuestionBank/MLclassifierQuestionBank.txt', 'r') as file:
+                    content = file.read()
+        elif self.choice.get() == 4:
+            with open('./apptemplates/QuestionBank/classifierQuestionBank.txt', 'r') as file:
                 content = file.read()
+
         query = "My question is: " + self.user_question + "\nPlease refer to the following question bank and choose the Section number that matches the meaning of my question. Please note that as long as the meaning matches, there is no need for word-for-word correspondence. My entry may have spelling or grammatical mistakes, please ignore those mistakes. Returns 0 if no section matches. Only answer an integer as you choose, do not reply with any information other than the integer, do not reply why you chose the section number. Following is the question bank: \n"+content
 
         print(query)

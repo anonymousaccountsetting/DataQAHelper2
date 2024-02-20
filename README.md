@@ -55,7 +55,7 @@ Python prototype.py
 ## Prototype workflow
 **Step 1:**  
 The user selects the dataset they wish to analyze.
-![Image description](readme\1.jpg)
+![Image description](readme/1.jpg)
 
 **Step 2:**  
 The user selects the independent and dependent variables.

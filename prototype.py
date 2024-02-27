@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import pandas as pd
+from sklearn.impute import SimpleImputer
 import os
 from docx import Document
 import statsmodels.api as sm
@@ -361,9 +362,10 @@ class MyApp:
         tk.Button(self.window, text="Next", command=self.step5, anchor='e').pack()
 
     def perform_regression(self):
+        threshold=0.8
+        self.csv_data=self.cleanData( self.csv_data, threshold, Xcol=self.selected_independent_vars, ycol=self.selected_dependent_var)
         X = self.csv_data[self.selected_independent_vars]
         y = self.csv_data[self.selected_dependent_var]
-
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         if self.model_var.get() == 0:
@@ -479,6 +481,7 @@ class MyApp:
         if self.model_var.get()<4:
             # print(model.feature_importances_)
             self.coefficients=model.coef_
+            self.target_class = model.classes_
             target_names = model.classes_
 
             if len(target_names) == 2 and model.coef_.shape[0] == 1:
@@ -648,7 +651,7 @@ class MyApp:
             self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
             return
         key=user_api_key
-        
+
         os.environ['OPENAI_API_KEY'] = key
         gpt_model_name_input = self.gpt_model_name.get()
         gpt_model_name = gpt_model_name_input if gpt_model_name_input else "gpt-3.5-turbo"
@@ -803,13 +806,17 @@ class MyApp:
                 positivecol = []
                 negativecol = []
                 notchangecol = []
+                i=0
                 for self.selected_independent_vars, coeff in row.items():
-                    if coeff > 0:
-                        positivecol.append(self.selected_independent_vars)
-                    elif coeff < 0:
-                        negativecol.append(self.selected_independent_vars)
-                    else:
-                        notchangecol.append(self.selected_independent_vars)
+                    if i!=0:
+                        if float(coeff) > 0:
+                            positivecol.append(self.selected_independent_vars)
+                        elif float(coeff) < 0:
+                            negativecol.append(self.selected_independent_vars)
+                        else:
+                            notchangecol.append(self.selected_independent_vars)
+                    i=i+1
+
                 answer = classifiersummary2.render(classes=target_names, pc=positivecol, nc=negativecol,
                                                    ncc=notchangecol)
                 questions.append(question)
@@ -820,14 +827,17 @@ class MyApp:
             questions = classifierquestion.render(section=3, ycol=self.selected_dependent_var)
             most_important_x = self.coeff_df.columns[np.argmax(np.abs(feature_importance))]
             answer = classifiersummary3.render(imp=most_important_x)
-            for target_name, row in self.coeff_df.iterrows():
-                most_important_feature = row.abs().idxmax()
-                text = text + f"\nFor the {target_name},the most important feature is {most_important_feature}."
-            answers = text + '\n' + answer
+            if len(self.target_class)> 2:
+                for target_name, row in self.coeff_df.iterrows():
+                    most_important_feature = row.abs().idxmax()
+                    text = text + f"\nFor the {target_name},the most important feature is {most_important_feature}."
+                answers = text + '\n' + answer
+            else:
+                answers=answer
 
         elif section_num == 4:
             questions = MLclassifierQuestionSet.render(section=4)
-            answers = classifiersummary1.render(trainR2=self.train_accuracy, testR2=self.test_accuracy)
+            answers = MachineLearningclassifierSummary1.render(trainR2=self.train_accuracy, testR2=self.test_accuracy)
 
         elif section_num == 5:
             questions = MLclassifierQuestionSet.render(section=5)
@@ -835,7 +845,7 @@ class MyApp:
             max_value = self.coeff_df.abs().max().max()
             most_important_x = self.coeff_df.columns[self.coeff_df.abs().iloc[0] == max_value][0]
 
-            answers = classifiersummary2.render(Xcol=most_important_x, ycol=self.selected_dependent_var,coeff=max_value)
+            answers = MachineLearningclassifierSummary2.render(Xcol=most_important_x, ycol=self.selected_dependent_var,coeff=max_value)
 
         elif section_num == 0:
             questions="There are no matching default questions in the template."
@@ -943,6 +953,22 @@ class MyApp:
     def get_selected_independent_vars(self):
         return [self.independent_vars.get(i) for i in self.independent_vars.curselection()]
 
+    def cleanData(self, data, threshold, Xcol=[], ycol=''):
+        """This function takes in as input a dataset, and returns a clean dataset.
+
+        :param data: This is the dataset that will be cleaned.
+        :param treshold: This is the treshold that decides whether columns are deleted or their missing values filled.
+        :return: A dataset that does not have any missing values.
+        """
+        if Xcol != [] and ycol != '':
+            data = data[Xcol + [ycol]]
+        data = data.replace('?', np.nan)
+        data = data.loc[:, data.isnull().mean() < threshold]  # filter data
+        imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+        for i in data.columns:
+            imputer = imputer.fit(data[[i]])
+            data[[i]] = imputer.transform(data[[i]])
+        return data
     def more_readable_model_name(self):
         modeldetail=self.modeldetail
         if "Ridge" in modeldetail and "BayesianRidge" not in modeldetail:

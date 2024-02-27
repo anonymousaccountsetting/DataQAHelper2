@@ -3,8 +3,8 @@ How accurate is the model?
 OR Is the model credible?
 
 Section 2: Question about how the independent variable(s) affects the dependent variable:
-Which independent variable(s) positively influence the {{classes}} of the dependent variable?
-OR Which independent variable(s) exert a negative impact on the {{classes}} of the dependent variable?
+Which independent variable(s) positively influence one of the classes of the dependent variable?
+OR Which independent variable(s) exert a negative impact on  one of the classes of the dependent variable?
 
 Section 3: Question about the impact of independent variables:
 For each classification result, which independent variable has the greatest impact? 

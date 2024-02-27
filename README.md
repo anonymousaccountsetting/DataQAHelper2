@@ -142,17 +142,17 @@ Python prototype.py
 ## Prototype workflow
 **Step 1:**  
 The user selects the dataset they wish to analyze.
-![Image description](readme\1.jpg)
+![Image description](readme/1.jpg)
 
 **Step 2:**  
 The user selects the independent and dependent variables.
-![Image description](readme\2.jpg)
+![Image description](readme/2.jpg)
 **Step 3:**  
 The user selects the type of machine learning (regression fitting or classification) / The user can let the prototype automatically select the most suitable model based on the criteria provided by the user.
-![Image description](readme\3.jpg)
+![Image description](readme/3.jpg)
 **Step 4:**  
 Select a required model and set hyperparameters / Check the results of the automatically selected model.
-![Image description](readme\4.jpg)
+![Image description](readme/4.jpg)
 **Step 5:**  
 The user needs to provide:  
 1. A question they want to learn about from the dataset.  
@@ -160,15 +160,15 @@ The user needs to provide:
 3. The model number used (optional).  
 4. Background knowledge about the dataset (optional).  
 5. A target text snippet to ensure the style and terminology of the output answer remain consistent (optional).
-![Image description](readme\5.jpg)
+![Image description](readme/5.jpg)
 **Step 6:**  
 Review the answer from the prototype.
-![Image description](readme\6.jpg)
+![Image description](readme/6.jpg)
 **Step 7:**  
 Pose another question.
-![Image description](readme\7.jpg)
+![Image description](readme/7.jpg)
 **Step 8:**  
 Review the answer from the prototype and choose to:
 A. Repeat Step 7. OR  
 B. Summarize all Q&As and generate a textual report.
-![Image description](readme\8.jpg)
+![Image description](readme/8.jpg)

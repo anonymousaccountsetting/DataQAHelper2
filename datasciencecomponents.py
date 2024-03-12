@@ -226,6 +226,8 @@ class DataScienceClassifierComponents:
     def set_coefficients(self,model,selected_independent_vars,selected_dependent_var):
         coefficients = model.coef_
         target_names = model.classes_
+        print(model.coef_)
+        print(model.classes_)
         if len(target_names) == 2 and model.coef_.shape[0] == 1:
             # Special handling for binary classification case
             coeff_df = pd.DataFrame(model.coef_, columns=selected_independent_vars, index=[target_names[0]])
@@ -239,6 +241,7 @@ class DataScienceClassifierComponents:
         return (coeff_df,coefficients)
 
     def set_feature_importances(self,model,selected_independent_vars):
+
         coefficients = model.feature_importances_
         coeff_df = pd.DataFrame([model.feature_importances_], columns=selected_independent_vars)
         return (coefficients,coeff_df)
@@ -286,7 +289,7 @@ class DataScienceClassifierComponents:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
         model = RandomForestClassifier()
         model.fit(X_train, y_train)
-        coeff_df,coefficients=DataScienceClassifierComponents.set_feature_importances(self,model,selected_independent_vars)
+        coefficients,coeff_df=DataScienceClassifierComponents.set_feature_importances(self,model,selected_independent_vars)
         accuracy, train_accuracy, test_accuracy=DataScienceClassifierComponents.set_accuracy(self,model,X_train,y_train,X_test,y_test)
         return (model,coeff_df,accuracy,coefficients,train_accuracy,test_accuracy)
 
@@ -294,6 +297,6 @@ class DataScienceClassifierComponents:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
         model = DecisionTreeClassifier()
         model.fit(X_train, y_train)
-        coeff_df,coefficients=DataScienceClassifierComponents.set_feature_importances(self,model,selected_independent_vars)
+        coefficients,coeff_df=DataScienceClassifierComponents.set_feature_importances(self,model,selected_independent_vars)
         accuracy, train_accuracy, test_accuracy=DataScienceClassifierComponents.set_accuracy(self,model,X_train,y_train,X_test,y_test)
         return (model,coeff_df,accuracy,coefficients,train_accuracy,test_accuracy)

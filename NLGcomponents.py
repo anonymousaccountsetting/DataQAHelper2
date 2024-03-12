@@ -221,7 +221,13 @@ class ClassifierTemplateBasedTextGeneration():
 
     def Q_and_A_about_ML_importance(self,coeff_df,selected_dependent_var):
         questions = MLclassifierQuestionSet.render(section=5)
+        print(coeff_df)
         max_value = coeff_df.abs().max().max()
+
+        # arr_abs = np.abs(coeff_df)
+        #
+        # max_value = arr_abs.max()
+
         most_important_x = coeff_df.columns[coeff_df.abs().iloc[0] == max_value][0]
         answers = MachineLearningclassifierSummary2.render(Xcol=most_important_x, ycol=selected_dependent_var,
                                                            coeff=max_value)

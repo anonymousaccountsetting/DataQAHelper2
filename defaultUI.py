@@ -2,24 +2,24 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import pandas as pd
 import os
-from docx import Document
 import re
-import openai
-import json
-import requests
 from datasciencecomponents import DataScienceRegressionComponents,DataScienceClassifierComponents,DataEngineering,FindBestModel
 from NLGcomponents import RegressionTemplateBasedTextGeneration,ClassifierTemplateBasedTextGeneration,SettingForChatGPT,AutoFindBestModel,LoadQuestionBank
-
+from LLMcomponents import SettingForLLM
+# Load data science components
 ds_regression_components = DataScienceRegressionComponents()
 ds_data_engineering=DataEngineering()
 ds_classifier_components= DataScienceClassifierComponents()
 ds_find_best_model=FindBestModel()
-
+# Load NLG components
 set_for_GPT=SettingForChatGPT()
 nlg_template_text_generate=RegressionTemplateBasedTextGeneration()
 nlg_classifier_template_text_generate=ClassifierTemplateBasedTextGeneration()
 auto_find_best_model=AutoFindBestModel()
 set_question_bank=LoadQuestionBank()
+# Load LLM components
+set_for_LLM=SettingForLLM()
+
 
 def extract_first_integer(string):
     match = re.search(r'\d+', string)
@@ -80,8 +80,7 @@ class MyApp:
             self.independent_vars.insert(tk.END, header)
 
         tk.Button(self.window, text="Back", command=self.step1, anchor='w').pack(side='bottom')
-        tk.Button(self.window, text="Next", command=self.save_selections_and_go_to_step3, anchor='e').pack(
-            side='bottom')
+        tk.Button(self.window, text="Next", command=self.save_selections_and_go_to_step3, anchor='e').pack(side='bottom')
 
     def save_selections_and_go_to_step3(self):
         self.selected_independent_vars = self.get_selected_independent_vars()
@@ -329,8 +328,10 @@ class MyApp:
         elif self.model_var.get()==5:
             model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_decision_tree_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
+        print("The coefficients and accuracy of the model are as follows:")
         print(self.coeff_df)
         print(self.test_accuracy)
+        print("---------------------")
         self.step5()
 
 
@@ -432,8 +433,10 @@ class MyApp:
         user_target_text = self.target_text.get()
         if user_target_text:
             question=question+" When you summarize, please keep your writing style and format consistent with what follows. \n"+user_target_text
-        payload, messages = self.set_payload(question, self.gpt_model_name, self.messages)
-        output, messages = self.send_response_receive_output(self.url, self.headers, payload, messages)
+
+        payload, messages = set_for_LLM.set_payload(question, self.gpt_model_name, self.messages)
+        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
+
         self.messages = messages
         self.summary=output
 
@@ -441,7 +444,10 @@ class MyApp:
         self.summary_label.delete(1.0, tk.END)
         self.summary_label.insert(tk.END, self.summary)
         self.summary_label.pack(pady=10)
-        self.save_chat_history_to_docx()
+
+        set_for_LLM.save_chat_history_to_docx(self.messages)
+
+
         self.again_button = tk.Button(self.window, text="Do it again", command=self.step1)
         self.again_button.pack(side=tk.LEFT, pady=10)
 
@@ -517,18 +523,17 @@ class MyApp:
 
         print(modelinformation)
 
-        self.url, self.background, self.chatmodel, self.headers, self.messages=self.set_chatGPT(self.selected_independent_vars, self.selected_dependent_var, self.modelname, modelinformation,key)
+        background = set_for_GPT.set_background(self.selected_independent_vars, self.selected_dependent_var, self.modelname, modelinformation)
+        self.url, self.background, self.chatmodel, self.headers, self.messages=set_for_LLM.set_chatGPT(background,key)
+
         if self.choice.get() == 1 or self.choice.get() ==3:
             self.go_to_step6_1()
         elif self.choice.get() == 2 or self.choice.get() ==4:
             self.go_to_step6_2()
 
-
     def go_to_step6_1(self):
         self.user_question=self.user_text.get()
-
         self.question_number_select()
-
         self.regression_answer()
         print(self.messages)
         self.GPTanswer=self.output
@@ -547,7 +552,7 @@ class MyApp:
         elif section_num==4:
             questions, answers = nlg_template_text_generate.Q_and_A_about_pvalues(self.coef_pval_df,self.selected_dependent_var)
         elif section_num==5:
-            questions, answers = nlg_template_text_generate.Q_and_A_about_ML_importance(self.selected_independent_vars,self.selected_dependent_var,self.coefficients)
+            questions, answers = nlg_template_text_generate.Q_and_A_about_ML_importance(self.selected_independent_vars,self.selected_dependent_var,self.coeff_df)
         elif section_num == 6:
             questions, answers = nlg_template_text_generate.Q_and_A_about_ML_overfit(self.r2_train,self.selected_dependent_var,self.r2_test)
         elif section_num==0:
@@ -560,8 +565,8 @@ class MyApp:
         default_answer=set_for_GPT.answer_update(self.user_question,questions,answers)
 
         print(default_answer)
-        payload, messages = self.set_payload(default_answer, self.gpt_model_name, self.messages)
-        output, messages = self.send_response_receive_output(self.url, self.headers, payload, messages)
+        payload, messages = set_for_LLM.set_payload(default_answer, self.gpt_model_name, self.messages)
+        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
         self.messages = messages
         self.output=output
 
@@ -597,11 +602,12 @@ class MyApp:
             questions="There are no matching default questions in the template."
             answers="Please answer the question based on the analysis results."
 
-        # default_answer = answerup.render(userquestion=self.user_text.get(), questions=questions, answers=answers)
-        default_answer = set_for_GPT.answer_update(self.user_text.get(), questions, answers)
+        default_answer = set_for_GPT.answer_update(self.user_question, questions, answers)
         print(default_answer)
-        payload, messages = self.set_payload(default_answer, self.gpt_model_name, self.messages)
-        output, messages = self.send_response_receive_output(self.url, self.headers, payload, messages)
+
+
+        payload, messages = set_for_LLM.set_payload(default_answer, self.gpt_model_name, self.messages)
+        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
 
         self.messages = messages
         self.output=output
@@ -626,62 +632,17 @@ class MyApp:
         elif self.choice.get() == 4:
             content = set_question_bank.load_classifier_questions()
 
-        query = "My question is: " + self.user_question + "\nPlease refer to the following question bank and choose the Section number that matches the meaning of my question. Please note that as long as the meaning matches, there is no need for word-for-word correspondence. My entry may have spelling or grammatical mistakes, please ignore those mistakes. Returns 0 if no section matches. Only answer an integer as you choose, do not reply with any information other than the integer, do not reply why you chose the section number. Following is the question bank: \n"+content
+        query = "My question is: " + self.user_question + "\nPlease refer to the following question bank and choose the Section number (for example, if you choose Section 5, please return 5.) that matches the meaning of my question. Please note that as long as the meaning matches, there is no need for word-for-word correspondence. My entry may have spelling or grammatical mistakes, please ignore those mistakes. Returns 0 if no section matches. Only answer an integer as you choose, do not reply with any information other than the integer, do not reply why you chose the section number. Following is the question bank: \n"+content
 
         print(query)
-        payload, messages = self.set_payload(query, self.gpt_model_name, self.messages)
-        output, messages = self.send_response_receive_output(self.url, self.headers, payload, messages)
+
+        payload, messages = set_for_LLM.set_payload(query, self.gpt_model_name, self.messages)
+        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
 
         self.section_num = extract_first_integer(output)
         print(output)
         print(self.section_num)
 
-    def set_chatGPT(self, Xcol, ycol, modelname, modelinformation, key, chatmodel="gpt-3.5-turbo", url="https://api.openai.com/v1/chat/completions"):
-        openai.api_key = key
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {openai.api_key}"
-        }
-        background=set_for_GPT.set_background(Xcol,ycol,modelname,modelinformation)
-        messages = [{"role": "system", "content": background}, ]
-        return (url, background, chatmodel, headers, messages)
-
-    def set_payload(self, message,GPTmodelname="gpt-3.5-turbo", messages=[]):
-        messages.append({"role": "user", "content": message}, )
-        payload = {
-            "model": GPTmodelname,
-            "messages": messages,
-            "temperature": 1.0,
-            "top_p": 1.0,
-            "n": 1,
-            "stream": False,
-            "presence_penalty": 0,
-            "frequency_penalty": 0,
-        }
-        return (payload, messages)
-
-    def send_response_receive_output(self, URL, headers, payload, messages):
-        response = requests.post(URL, headers=headers, json=payload, stream=False)
-        print(json.loads(response.content))
-        output = json.loads(response.content)["choices"][0]['message']['content']
-        messages.append({"role": "assistant", "content": output})
-        return (output, messages)
-
-    def save_chat_history_to_docx(self):
-        doc = Document()
-
-        for message in self.messages:
-            role = message['role']
-            content = message['content']
-
-            if role == 'user':
-                doc.add_paragraph('User: ' + content)
-            elif role == 'assistant':
-                doc.add_paragraph('Assistant: ' + content)
-            else:
-                doc.add_paragraph(content)
-        filename="data_report.docx"
-        doc.save(filename)
 
     def get_selected_independent_vars(self):
         return [self.independent_vars.get(i) for i in self.independent_vars.curselection()]

@@ -469,12 +469,12 @@ class MyApp:
         self.step9()
 
     def set_background(self):
-        # user_api_key = self.api_key.get()
-        # if not user_api_key:
-        #     self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
-        #     return
-        # key=user_api_key
-        key='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'
+        user_api_key = self.api_key.get()
+        if not user_api_key:
+            self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
+            return
+        key=user_api_key
+
         os.environ['OPENAI_API_KEY'] = key
         gpt_model_name_input = self.gpt_model_name.get()
         gpt_model_name = gpt_model_name_input if gpt_model_name_input else "gpt-3.5-turbo"

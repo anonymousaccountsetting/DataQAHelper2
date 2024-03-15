@@ -311,22 +311,22 @@ class MyApp:
         y = self.csv_data[self.selected_dependent_var]
 
         if self.model_var.get() == 0:
-            model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_logistic_regression(X, y,self.selected_independent_vars,self.selected_dependent_var)
+            self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_logistic_regression(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
         elif self.model_var.get()==1:
-            model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_linear_discriminant_analysis(X, y,self.selected_independent_vars,self.selected_dependent_var)
+            self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_linear_discriminant_analysis(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
         elif self.model_var.get()==2:
-            model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_SVC_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
+            self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_SVC_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
         elif self.model_var.get()==3:
-            model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_ridge_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
+            self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_ridge_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
         elif self.model_var.get()==4:
-            model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_random_forest_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
+            self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_random_forest_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
         elif self.model_var.get()==5:
-            model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_decision_tree_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
+            self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_decision_tree_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
         print("The coefficients and accuracy of the model are as follows:")
         print(self.coeff_df)
@@ -469,12 +469,12 @@ class MyApp:
         self.step9()
 
     def set_background(self):
-        user_api_key = self.api_key.get()
-        if not user_api_key:
-            self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
-            return
-        key=user_api_key
-
+        # user_api_key = self.api_key.get()
+        # if not user_api_key:
+        #     self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
+        #     return
+        # key=user_api_key
+        key='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'
         os.environ['OPENAI_API_KEY'] = key
         gpt_model_name_input = self.gpt_model_name.get()
         gpt_model_name = gpt_model_name_input if gpt_model_name_input else "gpt-3.5-turbo"
@@ -592,7 +592,7 @@ class MyApp:
         elif section_num == 2:
             questions,answers=nlg_classifier_template_text_generate.Q_and_A_about_coefficients(self.coeff_df,self.selected_dependent_var)
         elif section_num == 3:
-            questions,answers=nlg_classifier_template_text_generate.Q_and_A_about_importance(self.coefficients,self.selected_dependent_var,self.coeff_df,self.target_class)
+            questions,answers=nlg_classifier_template_text_generate.Q_and_A_about_importance(self.coefficients,self.selected_dependent_var,self.coeff_df,self.model.classes_)
         elif section_num == 4:
             questions,answers=nlg_classifier_template_text_generate.Q_and_A_about_ML_overfit(self.train_accuracy,self.test_accuracy)
         elif section_num == 5:
@@ -651,3 +651,5 @@ class MyApp:
 if __name__ == '__main__':
     app = MyApp()
     app.start()
+
+

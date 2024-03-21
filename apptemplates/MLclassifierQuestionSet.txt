@@ -1,6 +1,6 @@
 {%- if section==1 -%}
 Question about the model accuracy:
-How accuracy is the model? 
+How accurate is the model?
 OR Is the model credible?
 {%- endif -%}
 {%- if section==4-%}

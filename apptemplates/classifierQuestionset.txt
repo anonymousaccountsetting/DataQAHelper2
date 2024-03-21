@@ -1,6 +1,6 @@
 {%- if section==1 -%}
 Question about the model accuracy:
-How accuracy is the {{modelname}}? Is the model credible?
+How accurate is the {{modelname}}? Is the model credible?
 {%- endif -%}
 {%- if section==2 -%}
 Question about how the independent variable affects the dependent variable:

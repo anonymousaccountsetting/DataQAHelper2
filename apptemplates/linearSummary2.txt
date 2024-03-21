@@ -1,6 +1,6 @@
 The R-squared for the {{modelname}} has a value of {{r2 | round(3)}}.
 {% if r2 < 0.3 -%}
-So, the relationship between the chosen independent variable and the dependent variable is none or very weak.
+Thus, the relationship between the chosen independent variable and the dependent variable is nonexistent or very weak.
 You should not trust the analysis provided to make inferences.
 {% elif r2 < 0.5 and r2 > 0.3 -%}
 So, the relationship between the chosen independent variable and the dependent variable is weak or low.

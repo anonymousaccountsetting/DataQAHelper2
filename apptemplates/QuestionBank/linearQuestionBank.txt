@@ -2,8 +2,9 @@ Section 1: Question about the model situation:
 Is the relationship between the independent variable(s) and the dependent variable strong?
 OR Is the model credible?
 
-Section 2: Question about how the independent variable affects the dependent variable:
+Section 2: Question about how (different) independent variable affects the dependent variable:
 How does the dependent variable change with an increase in the independent variable(s)?
+OR What is the impact of different independent variables on dependent variable?
 
 Section 3: Question about which independent variable has the greatest impact:
 Which independent variable has the greatest impact on the dependent variable?

@@ -154,9 +154,9 @@ class RegressionTemplateBasedTextGeneration():
 
     def Q_and_A_about_ML_importance(self,selected_independent_vars,selected_dependent_var,coefficients):
         questions = MLlinearQuestionSet.render(section=5, ycol=selected_dependent_var)
-        most_important_x = selected_independent_vars[np.argmax(np.abs(coefficients[1:]))]
-        answers = MachineLearningLinearModelSummary1.render(ycol=selected_dependent_var, Xcol=most_important_x,
-                                                            coeff=np.abs(coefficients[1:]))
+        # most_important_x = selected_independent_vars[np.argmax(np.abs(coefficients[1:]))]
+        most_important_x = coefficients.loc[coefficients['Coefficients'].abs().idxmax(), 'Xcol']
+        answers = MachineLearningLinearModelSummary1.render(ycol=selected_dependent_var, Xcol=most_important_x)
         return (questions,answers)
 
     def Q_and_A_about_ML_overfit(self,r2_train,selected_dependent_var,r2_test):
@@ -203,8 +203,11 @@ class ClassifierTemplateBasedTextGeneration():
     def Q_and_A_about_importance(self,coefficients,selected_dependent_var,coeff_df,target_class):
         feature_importance = np.mean(np.abs(coefficients), axis=0)
         questions = classifierquestion.render(section=3, ycol=selected_dependent_var)
-        most_important_x = coeff_df.columns[np.argmax(np.abs(feature_importance))]
+        most_important_x = coeff_df.columns[np.argmax(feature_importance)+1]
+        # most_important_x = [col for col in coeff_df.columns if (np.abs(coeff_df[col]) == coeff_df.abs().max().max()).any()]
+        print(most_important_x)
         answer = classifiersummary3.render(imp=most_important_x)
+        text=''
         if len(target_class) > 2:
             for target_name, row in coeff_df.iterrows():
                 most_important_feature = row.abs().idxmax()
@@ -230,6 +233,6 @@ class ClassifierTemplateBasedTextGeneration():
 
         most_important_x = coeff_df.columns[coeff_df.abs().iloc[0] == max_value][0]
         answers = MachineLearningclassifierSummary2.render(Xcol=most_important_x, ycol=selected_dependent_var,
-                                                           coeff=max_value)
+                                                          )
         return (questions,answers)
 

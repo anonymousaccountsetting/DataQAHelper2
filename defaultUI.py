@@ -304,6 +304,7 @@ class MyApp:
 
         self.coef_pval_df = ds_regression_components.coefficients_with_Pvalues(self.coefficients,self.p_values,self.selected_independent_vars)
         print(self.coef_pval_df)
+
         self.step5()
 
     def perform_classifier(self):
@@ -552,7 +553,7 @@ class MyApp:
         elif section_num==4:
             questions, answers = nlg_template_text_generate.Q_and_A_about_pvalues(self.coef_pval_df,self.selected_dependent_var)
         elif section_num==5:
-            questions, answers = nlg_template_text_generate.Q_and_A_about_ML_importance(self.selected_independent_vars,self.selected_dependent_var,self.coeff_df)
+            questions, answers = nlg_template_text_generate.Q_and_A_about_ML_importance(self.selected_independent_vars,self.selected_dependent_var,self.coef_pval_df)
         elif section_num == 6:
             questions, answers = nlg_template_text_generate.Q_and_A_about_ML_overfit(self.r2_train,self.selected_dependent_var,self.r2_test)
         elif section_num==0:

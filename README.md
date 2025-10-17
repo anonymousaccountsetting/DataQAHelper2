@@ -1,4 +1,4 @@
-# DataQAHelper:computer:
+# DataQAHelper💻
 ###### 
 
 # Overview:
@@ -58,7 +58,7 @@ streamlit run stUIforAPI.py
 ```
 
 > 🆕 This is the **latest prototype** with enhanced visual UI.  
-> It supports model recommendation based on user questions, model fitting, and both local/API-based LLM response generation.  
+> It supports model recommendation based on user questions, model fitting, and both local/API-based LLM question-answer generation.  
 > It also includes an improved data browsing interface with visualizations.
 
 
@@ -66,14 +66,14 @@ streamlit run stUIforAPI.py
 python defaultUI.py
 ```
 
-> 🗂 This is the **original lightweight prototype**, which supports model fitting and uses the OpenAI API for LLM-based answering.
+> 🗂 This is a **original lightweight prototype**, which supports model fitting and uses the OpenAI API for LLM-based answering.
 
 
 ```
 python defaultUIforLocal.py
 ```
 
-> 💻 This is the **original lightweight prototype** with support for local LLM answering via Ollama, along with model fitting.
+> 🗂 This is a **original lightweight prototype**, which supports model fitting and uses the local LLM answering via Ollama.
 
 ## Prototype workflow
 **Step 1:**  

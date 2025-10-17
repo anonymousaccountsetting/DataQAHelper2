@@ -6,6 +6,7 @@
 <p align="center">
   <img src="readme/demo.gif" width="700">
 </p>
+
 # Overview:
 This document provides an overview of how you can use this tool in your data exploration workflow.
 

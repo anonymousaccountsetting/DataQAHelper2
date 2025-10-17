@@ -1,4 +1,7 @@
 # DataQAHelper💻
+> 📄 This repository supports the experiments presented in our paper:  
+> **"Title of Your Paper" (Conference/Journal Name, Year)**  
+> It provides prototypes for interactive data analysis powered by LLMs.
 ###### 
 
 # Overview:

@@ -1,15 +1,15 @@
 # DataQAHelper:computer:
-###### *Developed by - Ruilin Wang *
+###### 
 
 # Overview:
 This document provides an overview of how you can use this tool in your data exploration workflow.
 
-Note: This document assumes that you have already had an OpenAI API key and cloned the package, if you have not done so already, please check out this [page for the API key](https://platform.openai.com/api-keys) and this [page for the package](https://github.com/tangjikededela/DataQAHelper2).
+Note: This document assumes that you have already had an OpenAI API key or Ollama, and cloned the package, if you have not done so already, please check out this [page for the API key](https://platform.openai.com/api-keys) and this [page for the package](https://github.com/tangjikededela/DataQAHelper2). To use local large language models (LLMs) through Ollama, please make sure you have [Ollama installed](https://ollama.com/) and downloaded a model (e.g., `deepseek-r1-14b`, etc.).
 
 ----
 
-# About the application:
-DataQAHelper is a Python-based prototype that integrates a wide array of commonly used data science algorithms along with a comprehensive question bank commonly used to interpret analysis results. Once operational, it allows users to select the dataset they wish to analyze, pose questions, and either choose the model they wish to use or let the prototype automatically select the most appropriate model. Subsequently, the prototype will perform model fitting to complete the data analysis and answer the user's questions based on the analysis results. This question-and-answer process can be repeated until the user is satisfied.
+# About the framework:
+DataQAHelper is a Python-based framework that integrates a wide array of commonly used data science algorithms along with a comprehensive question bank commonly used to interpret analysis results. Once a prototype is operational, it allows users to select the dataset they wish to analyze, pose questions, and either choose a machine learning model they wish to use or let the prototype automatically select the most appropriate model. Subsequently, the prototype will perform model fitting to complete the data analysis and answer the user's questions based on the analysis results. This question-and-answer process can be repeated until the user is satisfied.
 
 ____
 ## System Requirements 
@@ -20,24 +20,29 @@ ____
 
 ### The following packages are required to run the prototype:
 ```
-beautifulsoup4==4.12.3
-catboost==1.2.2
-Jinja2==3.1.2
-langchain==0.1.7
-lightgbm==4.3.0
-matplotlib==3.7.2
-numpy==1.23.5
-openai==0.27.8
+streamlit==1.43.1
 pandas==1.5.3
-pip==23.2.1
-pycaret==3.0.4
-python-dotenv==1.0.1
-python_docx==0.8.11
-Requests==2.31.0
-scikit_learn==1.2.2
-seaborn==0.13.2
+numpy==1.23.5
+scikit-learn==1.2.2
 statsmodels==0.14.0
+matplotlib==3.7.2
+seaborn==0.13.2
+
+jinja2==3.1.2
+python-docx==0.8.11
+requests==2.31.0
+python-dotenv==1.0.1
+openai==0.27.8
+ollama==0.4.7
+
+pycaret==3.0.4
 xgboost==2.0.3
+lightgbm==4.3.0
+catboost==1.2.2
+scikit-plot==0.3.7
+imbalanced-learn==0.12.4
+plotly==5.24.1
+
 ```
 ____
 # Guidelines
@@ -46,10 +51,29 @@ Before everything starts, please make sure that the Python version is 3.10.6, an
 ```
 pip install -r requirements.txt
 ```
-After completing the installation of the package, enter the following command on the terminal to run the prototype:
+After completing the installation, you can run **any of the following commands in your terminal** to launch a specific prototype:
+
 ```
-Python prototype.py
+streamlit run stUIforAPI.py
 ```
+
+> 🆕 This is the **latest prototype** with enhanced visual UI.  
+> It supports model recommendation based on user questions, model fitting, and both local/API-based LLM response generation.  
+> It also includes an improved data browsing interface with visualizations.
+
+
+```
+python defaultUI.py
+```
+
+> 🗂 This is the **original lightweight prototype**, which supports model fitting and uses the OpenAI API for LLM-based answering.
+
+
+```
+python defaultUIforLocal.py
+```
+
+> 💻 This is the **original lightweight prototype** with support for local LLM answering via Ollama, along with model fitting.
 
 ## Prototype workflow
 **Step 1:**  

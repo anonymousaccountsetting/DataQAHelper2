@@ -4,7 +4,7 @@
 # Overview:
 This document provides an overview of how you can use this tool in your data exploration workflow.
 
-Note: This document assumes that you have already had an OpenAI API key or Ollama, and cloned the package, if you have not done so already, please check out this [page for the API key](https://platform.openai.com/api-keys) and this [page for the package](https://github.com/tangjikededela/DataQAHelper2). To use local large language models (LLMs) through Ollama, please make sure you have [Ollama installed](https://ollama.com/) and downloaded a model (e.g., `deepseek-r1-14b`, etc.).
+Note: This document assumes that you already have an OpenAI API key or Ollama installed, and have cloned the package. If you have not done so already, please check out this [page for the API key](https://platform.openai.com/api-keys) and this [page for the package](https://github.com/tangjikededela/DataQAHelper2). To use local large language models (LLMs) through Ollama, please make sure you have [Ollama installed](https://ollama.com/) and downloaded a model (e.g., `deepseek-r1:14b`, etc.).
 
 ----
 
@@ -47,7 +47,7 @@ plotly==5.24.1
 ____
 # Guidelines
 ## Requirements Installation
-Before everything starts, please make sure that the Python version is 3.10.6, and Microsoft Visual C++ 14.0 or greater is required. Get it with: ["Microsoft C++ Build Tools"](https://visualstudio.microsoft.com/visual-cpp-build-tools/). Then, please use the following commands to install necessary packages:
+Before getting started, please make sure that the Python version is 3.10.6, and Microsoft Visual C++ 14.0 or greater is installed. Get it with: ["Microsoft C++ Build Tools"](https://visualstudio.microsoft.com/visual-cpp-build-tools/). Then, please use the following command to install the necessary packages:
 ```
 pip install -r requirements.txt
 ```
@@ -66,14 +66,14 @@ streamlit run stUIforAPI.py
 python defaultUI.py
 ```
 
-> 🗂 This is a **original lightweight prototype**, which supports model fitting and uses the OpenAI API for LLM-based answering.
+> 🗂 This is an **original lightweight prototype**, which supports model fitting and uses the OpenAI API for LLM-based answering.
 
 
 ```
 python defaultUIforLocal.py
 ```
 
-> 🗂 This is a **original lightweight prototype**, which supports model fitting and uses the local LLM answering via Ollama.
+> 🗂 This is an **original lightweight prototype**, which supports model fitting and uses the local LLM answering via Ollama.
 
 ## Prototype workflow
 **Step 1:**  

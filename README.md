@@ -88,8 +88,10 @@ python defaultUIforLocal.py
 **Step 1: Upload Dataset**  
 Upload a CSV file via the file uploader as shown in Figure 1. A preview of the data, summary metrics (row count, number of variables, missing values), and a scrollable table are displayed as shown in Figure 2.  
 *Optional:* specify a custom folder for the question bank (a directory containing `.txt` files), then click **Load new question bank path** to refresh question sources.  
+
 ***Figure 1. Upload Dataset.***
 ![Figure1](readme/st1.png)
+
 ***Figure 2. Preview of the data.***
 ![Figure2](readme/st2.png)
 
@@ -97,6 +99,7 @@ Upload a CSV file via the file uploader as shown in Figure 1. A preview of the d
 
 **Step 2: Select Variables**  
 Choose the **dependent (target) variable** and one or more **independent (feature) variables** from the dropdowns.  
+
 ***Figure 3. Select Variables.***
 ![Figure3](readme/st3.png)
 
@@ -107,15 +110,19 @@ Select the LLM source for subsequent question matching and answer generation:
 - **Use local Ollama** (no API key; requires a locally installed model) as shown in Figure 5, or  
 - **Call OpenAI API** (provide model name and API key) as shown in Figure 6.  
 Proceed when the configuration is correct.
+
 ***Figure 4. Confirm selection.***
 ![Figure4](readme/st4.png)
+
 ***Figure 5. LLM source: local Ollama selection.***
 ![Figure5](readme/st5.png)
+
 ***Figure 6. LLM source: OpenAI API configuration.***
 ![Figure6](readme/st6.png)
 
 **Step 4: Enter Dataset Background Knowledge**  
 Provide a succinct textual description of the dataset (domain context, variable semantics, data collection notes). This background is injected into the LLM context and used to improve question matching and answer quality. Save to continue.  
+
 ***Figure 7. Enter background knowledge.***
 ![Figure7](readme/st7.png)
 
@@ -123,6 +130,7 @@ Provide a succinct textual description of the dataset (domain context, variable 
 Paste a numbered list of questions (e.g., `1. … 2. … 3. …`). The system parses them and computes **question–model match counts** against the loaded question banks.  
 - The **recommended model(s)** are highlighted based on the highest match counts.  
 - You may **Skip recommendation** to proceed directly to model selection.  
+
 ***Figure 8. Model recommendation.***
 ![Figure8](readme/st8.png)
 
@@ -131,12 +139,14 @@ Choose **one** task family—**Regression** *or* **Classification**—and then p
 - *Regression:* Statsmodels OLS, scikit-learn Linear/Ridge/Lasso/Bayesian Ridge/Gradient Boosting/Random Forest, or Auto-fit Best.  
 - *Classification:* Logistic Regression, Linear Discriminant Analysis, Linear SVM, Ridge Classifier, Random Forest, Decision Tree, or Auto-fit Best.  
 The system performs data cleaning, trains the model, and reports key outputs (e.g., coefficients with p-values, \(R^2\), train/test metrics, or accuracy with train/test splits).  
+
 ***Figure 9. Model selection.***
 ![Figure9](readme/st9.png)
 
 **Step 7: Ask a Single Question**  
 Enter a specific question about the dataset or fitted model. The system automatically matches the question to a relevant template section (e.g., accuracy, importance, overfitting, coefficients/p-values) and composes a draft answer grounded in model outputs.  
 Answers are generated via the selected LLM source (Ollama or OpenAI).  
+
 ***Figure 10. Single-question interface.***
 ![Figure10](readme/st10.png)
 
@@ -146,8 +156,10 @@ Inspect the generated answer. You may:
 A. **Ask again** (iterate with another single question), or  
 B. **Generate summary** to consolidate the Q&A into a concise report focused on the user’s questions and model findings.  
 The `.docx` report of the session is saved (including the conversation context), enabling archival and reproducibility.  
+
 ***Figure 11. Answer review.***
 ![Figure11](readme/st11.png)
+
 ***Figure 12. Summary report generation.***
 ![Figure12](readme/st12.png)
 

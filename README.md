@@ -89,7 +89,11 @@ python defaultUIforLocal.py
 Upload a CSV file via the file uploader as shown in Figure 1. A preview of the data, summary metrics (row count, number of variables, missing values), and a scrollable table are displayed as shown in Figure 2.  
 *Optional:* specify a custom folder for the question bank (a directory containing `.txt` files), then click **Load new question bank path** to refresh question sources.  
 ![Figure 1](readme/st1.png)
+***Figure 1. Upload Dataset.***
 ![Figure 2](readme/st2.png)
+***Figure 2. Preview of the data.***
+
+
 **Step 2: Select Variables**  
 Choose the **dependent (target) variable** and one or more **independent (feature) variables** from the dropdowns.  
 ![Image description](readme_new/step2.jpg)

@@ -10,4 +10,3 @@ Section 3: Question about the impact of independent variables:
 What is the most influential factor?
 OR For each classification result, which independent variable has the greatest impact?
 OR On average, which independent variable has the greatest impact on classification results?
-

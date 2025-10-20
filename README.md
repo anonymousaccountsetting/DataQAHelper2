@@ -83,9 +83,7 @@ python defaultUIforLocal.py
 
 > 🗂 This is an **original lightweight prototype**, which supports model fitting and uses the local LLM answering via Ollama.
 
-## Prototype workflow
-- [Prototype Workflow — Updated UI (Streamlit)](#prototype-workflow--updated-ui-streamlit)
-## Prototype Workflow (New UI)
+## Prototype Workflow — Updated UI (Streamlit)
 
 **Step 1: Upload Dataset**  
 Upload a CSV file via the file uploader. A preview of the data, summary metrics (row count, number of variables, missing values), and a scrollable table are displayed.  
@@ -134,7 +132,7 @@ A `.docx` report of the session is saved (including the conversation context), e
 ![Image description](readme_new/step8.jpg)
 
 
-- [Prototype Workflow — Original (Lightweight)](#prototype-workflow--original-lightweight)
+## Prototype Workflow — Original (Lightweight)
 **Step 1:**  
 The user selects the dataset they wish to analyze.
 ![Image description](readme/1.jpg)

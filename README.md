@@ -5,7 +5,8 @@
 
 <p align="center">
   <img src="readme/demo.gif" width="700">
-</p>
+A question-centred framework that couples model recommendation/fitting with template-guided LLM generation to deliver interpretable, reproducible data-to-text reports—supporting OpenAI API or local Ollama backends while curbing hallucinations.
+</em></p>
 
 # Overview:
 This document provides an overview of how you can use this tool in your data exploration workflow.

@@ -40,6 +40,48 @@ class SettingForLLM():
         messages.append({"role": "assistant", "content": output})
         return (output, messages)
 
+    def question_matching(self, question, content, model, url, headers, messages):
+        query = (
+            "My question is: " + question + "\n"
+            "Please refer to the following question bank and choose the Section number "
+            "(for example, if you choose Section 5, please return 5.) that matches the meaning of my question. "
+            "Please note that as long as the meaning matches, there is no need for word-for-word correspondence. "
+            "My entry may have spelling or grammatical mistakes, please ignore those mistakes. "
+            "Returns 0 if no section matches. Only answer an integer as you choose, do not reply with any information "
+            "other than the integer, do not reply why you chose the section number, do not reply to your thought process. "
+            "Following is the question bank: \n" + content
+        )
+
+        print("Sending question matching prompt to OpenAI:")
+        print(query)
+
+        # 构建 prompt 并加入历史消息
+        messages.append({"role": "user", "content": query})
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": 0.2,
+            "top_p": 1.0,
+            "n": 1,
+            "stream": False,
+            "presence_penalty": 0,
+            "frequency_penalty": 0,
+        }
+
+        response = requests.post(url, headers=headers, json=payload)
+        print("Question Matching Response:")
+        print(response.content)
+
+        try:
+            result = json.loads(response.content)
+            output = result["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            output = "0"
+            print(f"❌ Failed to parse OpenAI response: {e}")
+
+        return output
+
+
     def save_chat_history_to_docx(self,messages):
         doc = Document()
 

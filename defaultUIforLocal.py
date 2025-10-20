@@ -6,6 +6,7 @@ import re
 from datasciencecomponents import DataScienceRegressionComponents,DataScienceClassifierComponents,DataEngineering,FindBestModel
 from NLGcomponents import RegressionTemplateBasedTextGeneration,ClassifierTemplateBasedTextGeneration,SettingForChatGPT,AutoFindBestModel,LoadQuestionBank
 from LLMcomponents import SettingForLLM
+from LocalLLMcomponents import SettingForOllama
 # Load data science components
 ds_regression_components = DataScienceRegressionComponents()
 ds_data_engineering=DataEngineering()
@@ -19,6 +20,7 @@ auto_find_best_model=AutoFindBestModel()
 set_question_bank=LoadQuestionBank()
 # Load LLM components
 set_for_LLM=SettingForLLM()
+set_for_localLLM=SettingForOllama()
 
 
 def extract_first_integer(string):
@@ -31,7 +33,7 @@ def extract_first_integer(string):
 class MyApp:
     def __init__(self):
         self.window = tk.Tk()
-        self.window.geometry('800x600')
+        self.window.geometry('900x900')
         self.window.title('My Application')
         self.csv_data = None
         self.independent_vars = None
@@ -249,8 +251,8 @@ class MyApp:
         self.modelname, self.modeldetail, self.selected_criterion,comapre_results=ds_find_best_model.find_best_regression(X,y,self.selected_dependent_var,self.selected_criterion,self.selected_independent_vars)
 
         modelcomparestory=auto_find_best_model.model_compare(self.modelname, self.modeldetail, self.selected_criterion,1)
-        print(comapre_results)
-        print(modelcomparestory)
+        # print(comapre_results)
+        # print(modelcomparestory)
         self.modelchoose_label = tk.Text(self.window, width=100, height=40)
         self.modelchoose_label.delete(1.0, tk.END)
         self.modelchoose_label.insert(tk.END, modelcomparestory)
@@ -268,7 +270,7 @@ class MyApp:
         self.modelname, self.modeldetail, self.selected_criterion,comapre_results=ds_find_best_model.find_best_classifier(X,y,self.selected_dependent_var,self.selected_criterion,self.selected_independent_vars)
 
         modelcomparestory=auto_find_best_model.model_compare(self.modelname, self.modeldetail, self.selected_criterion,1)
-        print(modelcomparestory)
+        # print(modelcomparestory)
         self.modelchoose_label = tk.Text(self.window, width=100, height=40)
         self.modelchoose_label.delete(1.0, tk.END)
         self.modelchoose_label.insert(tk.END, modelcomparestory)
@@ -303,7 +305,7 @@ class MyApp:
             self.coefficients, self.p_values, self.r_squared,self.r2_train,self.r2_test = ds_regression_components.train_random_forest_regression(X, y)
 
         self.coef_pval_df = ds_regression_components.coefficients_with_Pvalues(self.coefficients,self.p_values,self.selected_independent_vars)
-        print(self.coef_pval_df)
+        # print(self.coef_pval_df)
 
         self.step5()
 
@@ -329,10 +331,10 @@ class MyApp:
         elif self.model_var.get()==5:
             self.model, self.coeff_df, self.accuracy, self.coefficients, self.train_accuracy, self.test_accuracy=ds_classifier_components.train_decision_tree_classifier(X, y,self.selected_independent_vars,self.selected_dependent_var)
 
-        print("The coefficients and accuracy of the model are as follows:")
-        print(self.coeff_df)
-        print(self.test_accuracy)
-        print("---------------------")
+        # print("The coefficients and accuracy of the model are as follows:")
+        # print(self.coeff_df)
+        # print(self.test_accuracy)
+        # print("---------------------")
         self.step5()
 
 
@@ -435,8 +437,10 @@ class MyApp:
         if user_target_text:
             question=question+" When you summarize, please keep your writing style and format consistent with what follows. \n"+user_target_text
 
-        payload, messages = set_for_LLM.set_payload(question, self.gpt_model_name, self.messages)
-        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
+        # payload, messages = set_for_LLM.set_payload(question, self.gpt_model_name, self.messages)
+        # output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
+
+        output, messages = set_for_localLLM.send_response_receive_output(question,self.background,self.messages)
 
         self.messages = messages
         self.summary=output
@@ -446,7 +450,7 @@ class MyApp:
         self.summary_label.insert(tk.END, self.summary)
         self.summary_label.pack(pady=10)
 
-        set_for_LLM.save_chat_history_to_docx(self.messages)
+        set_for_localLLM.save_chat_history_to_docx(self.messages)
 
 
         self.again_button = tk.Button(self.window, text="Do it again", command=self.step1)
@@ -458,14 +462,14 @@ class MyApp:
         self.question_number_select()
         if self.choice.get()==1 or self.choice.get()==3:
             self.regression_answer()
-            print(self.messages)
+            # print(self.messages)
 
         elif self.choice.get()==2 or self.choice.get()==4:
             self.classifier_answer()
-            print(self.messages)
+            # print(self.messages)
 
         self.new_answer = self.output
-        print(self.messages)
+        # print(self.messages)
 
         self.step9()
 
@@ -522,10 +526,11 @@ class MyApp:
         if self.background_text !="":
             modelinformation=modelinformation+'\n'+self.background_text.get()
 
-        print(modelinformation)
+        # print(modelinformation)
 
         background = set_for_GPT.set_background(self.selected_independent_vars, self.selected_dependent_var, self.modelname, modelinformation)
-        self.url, self.background, self.chatmodel, self.headers, self.messages=set_for_LLM.set_chatGPT(background,key)
+        self.messages,self.background=set_for_localLLM.set_chat_background([],background)
+        # self.url, self.background, self.chatmodel, self.headers, self.messages=set_for_LLM.set_chatGPT(background,key)
 
         if self.choice.get() == 1 or self.choice.get() ==3:
             self.go_to_step6_1()
@@ -536,7 +541,7 @@ class MyApp:
         self.user_question=self.user_text.get()
         self.question_number_select()
         self.regression_answer()
-        print(self.messages)
+        # print(self.messages)
         self.GPTanswer=self.output
         self.step6()
 
@@ -560,14 +565,14 @@ class MyApp:
             questions="There are no matching default questions in the template."
             answers="Please answer the question based on the analysis results."
 
-        print(questions)
-        print(answers)
+        # print(questions)
+        # print(answers)
 
         default_answer=set_for_GPT.answer_update(self.user_question,questions,answers)
 
-        print(default_answer)
-        payload, messages = set_for_LLM.set_payload(default_answer, self.gpt_model_name, self.messages)
-        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
+        # print(default_answer)
+        # payload, messages = set_for_LLM.set_payload(default_answer, self.gpt_model_name, self.messages)
+        output, messages = set_for_localLLM.send_response_receive_output(default_answer,self.background,self.messages)
         self.messages = messages
         self.output=output
 
@@ -604,11 +609,10 @@ class MyApp:
             answers="Please answer the question based on the analysis results."
 
         default_answer = set_for_GPT.answer_update(self.user_question, questions, answers)
-        print(default_answer)
+        # print(default_answer)
 
-
-        payload, messages = set_for_LLM.set_payload(default_answer, self.gpt_model_name, self.messages)
-        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
+        # payload, messages = set_for_LLM.set_payload(default_answer, self.gpt_model_name, self.messages)
+        output, messages = set_for_localLLM.send_response_receive_output(default_answer,self.background,self.messages)
 
         self.messages = messages
         self.output=output
@@ -618,6 +622,7 @@ class MyApp:
         if self.choice.get() == 1:
             if self.model_var.get()<5:
                 content=set_question_bank.load_regression_questions()
+                print(self.model_var.get())
             else:
                 content=set_question_bank.load_ML_regression_questions()
 
@@ -633,16 +638,18 @@ class MyApp:
         elif self.choice.get() == 4:
             content = set_question_bank.load_classifier_questions()
 
-        query = "My question is: " + self.user_question + "\nPlease refer to the following question bank and choose the Section number (for example, if you choose Section 5, please return 5.) that matches the meaning of my question. Please note that as long as the meaning matches, there is no need for word-for-word correspondence. My entry may have spelling or grammatical mistakes, please ignore those mistakes. Returns 0 if no section matches. Only answer an integer as you choose, do not reply with any information other than the integer, do not reply why you chose the section number. Following is the question bank: \n"+content
+        # query = "My question is: " + self.user_question + "\nPlease refer to the following question bank and choose the Section number (for example, if you choose Section 5, please return 5.) that matches the meaning of my question. Please note that as long as the meaning matches, there is no need for word-for-word correspondence. My entry may have spelling or grammatical mistakes, please ignore those mistakes. Returns 0 if no section matches. Only answer an integer as you choose, do not reply with any information other than the integer, do not reply why you chose the section number. Following is the question bank: \n"+content
 
-        print(query)
+        # print(query)
 
-        payload, messages = set_for_LLM.set_payload(query, self.gpt_model_name, self.messages)
-        output, messages = set_for_LLM.send_response_receive_output(self.url, self.headers, payload, messages)
+        # payload, messages = set_for_LLM.set_payload(query, self.gpt_model_name, self.messages)
+        # output, messages = set_for_localLLM.send_response_receive_output(query,self.background,self.messages)
+
+        output=set_for_localLLM.question_matching(self.user_question,content)
 
         self.section_num = extract_first_integer(output)
-        print(output)
-        print(self.section_num)
+        # print(output)
+        # print(self.section_num)
 
 
     def get_selected_independent_vars(self):
@@ -652,5 +659,4 @@ class MyApp:
 if __name__ == '__main__':
     app = MyApp()
     app.start()
-
 

@@ -79,6 +79,7 @@ class LoadQuestionBank():
         with open('./apptemplates/QuestionBank/linearQuestionBank.txt', 'r') as file:
             content = file.read()
         return content
+
     def load_ML_regression_questions(self):
         with open('./apptemplates/QuestionBank/MLlinearQuestionBank.txt', 'r') as file:
             content = file.read()

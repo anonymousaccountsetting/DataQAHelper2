@@ -1,0 +1,8 @@
+{
+    "kb_paths": {
+        "regression": "D:\\study\\ADSTPapp\\kg\\kgr",
+        "classification": "D:\\study\\ADSTPapp\\kg\\kgc",
+        "math": "D:\\study\\ADSTPapp\\kg\\kgm",
+        "hybrid": "D:\\study\\ADSTPapp\\kg\\kgi"
+    }
+} 

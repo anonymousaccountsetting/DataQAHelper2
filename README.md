@@ -84,6 +84,57 @@ python defaultUIforLocal.py
 > 🗂 This is an **original lightweight prototype**, which supports model fitting and uses the local LLM answering via Ollama.
 
 ## Prototype workflow
+- [Prototype Workflow — Updated UI (Streamlit)](#prototype-workflow--updated-ui-streamlit)
+## Prototype Workflow (New UI)
+
+**Step 1: Upload Dataset**  
+Upload a CSV file via the file uploader. A preview of the data, summary metrics (row count, number of variables, missing values), and a scrollable table are displayed.  
+*Optional:* specify a custom folder for the question bank (a directory containing `.txt` files), then click **Load new question bank path** to refresh question sources.  
+![Image description](readme_new/step1.jpg)
+
+**Step 2: Select Variables**  
+Choose the **dependent (target) variable** and one or more **independent (feature) variables** from the dropdowns.  
+![Image description](readme_new/step2.jpg)
+
+**Step 3: Confirm Selection & Choose LLM Source**  
+Review a concise summary of the current selection. Inspect descriptive statistics and simple visualizations (distribution for the target; summary for features).  
+Select the LLM source for subsequent question matching and answer generation:  
+- **Use local Ollama** (no API key; requires a locally installed model), or  
+- **Call OpenAI API** (provide model name and API key).  
+Proceed when the configuration is correct.  
+![Image description](readme_new/step3.jpg)
+
+**Step 4: Enter Dataset Background Knowledge**  
+Provide a succinct textual description of the dataset (domain context, variable semantics, data collection notes). This background is injected into the LLM context and used to improve question matching and answer quality. Save to continue.  
+![Image description](readme_new/step4.jpg)
+
+**Step 5: Batch Questions & Model Recommendation**  
+Paste a numbered list of questions (e.g., `1. … 2. … 3. …`). The system parses them and computes **question–model match counts** against the loaded question banks.  
+- The **recommended model(s)** are highlighted based on the highest match counts.  
+- You may **Skip recommendation** to proceed directly to model selection.  
+![Image description](readme_new/step5.jpg)
+
+**Step 6: Select and Fit a Model**  
+Choose **one** task family—**Regression** *or* **Classification**—and then pick a specific model or use **Auto-fit Best**:  
+- *Regression:* Statsmodels OLS, scikit-learn Linear/Ridge/Lasso/Bayesian Ridge/Gradient Boosting/Random Forest, or Auto-fit Best.  
+- *Classification:* Logistic Regression, Linear Discriminant Analysis, Linear SVM, Ridge Classifier, Random Forest, Decision Tree, or Auto-fit Best.  
+The system performs data cleaning, trains the model, and reports key outputs (e.g., coefficients with p-values, \(R^2\), train/test metrics, or accuracy with train/test splits).  
+![Image description](readme_new/step6.jpg)
+
+**Step 7: Ask a Single Question**  
+Enter a specific question about the dataset or fitted model. The system automatically matches the question to a relevant template section (e.g., accuracy, importance, overfitting, coefficients/p-values) and composes a draft answer grounded in model outputs.  
+Answers are generated via the selected LLM source (Ollama or OpenAI).  
+![Image description](readme_new/step7.jpg)
+
+**Step 8: Review Answers & Generate Summary Report**  
+Inspect the generated answer. You may:  
+A. **Ask again** (iterate with another single question), or  
+B. **Generate summary** to consolidate the Q&A into a concise report focused on the user’s questions and model findings.  
+A `.docx` report of the session is saved (including the conversation context), enabling archival and reproducibility.  
+![Image description](readme_new/step8.jpg)
+
+
+- [Prototype Workflow — Original (Lightweight)](#prototype-workflow--original-lightweight)
 **Step 1:**  
 The user selects the dataset they wish to analyze.
 ![Image description](readme/1.jpg)

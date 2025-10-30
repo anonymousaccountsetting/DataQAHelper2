@@ -366,7 +366,6 @@ class LinearRegressionApp:
         self.step6_frame.pack(fill=tk.BOTH, expand=True)
 
     def go_to_step7(self):
-        # key = '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'
         user_api_key = self.api_key.get()
         if not user_api_key:
             self.answerbyGPT.config(text="Invalid API key. Please enter a valid API key.")
@@ -560,3 +559,4 @@ if __name__ == "__main__":
     root.geometry("800x600")
     app = LinearRegressionApp(root)
     root.mainloop()
+
